@@ -3,6 +3,7 @@ package core.dialog;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -48,9 +49,15 @@ public class ServiceConnectDialog extends Dialog {
 	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {// 如果单击确定按钮，
+			String host = hostTest.getText();
+			String prot = portText.getText();
+			if (StringUtils.isBlank(host) || StringUtils.isBlank(prot)) {
+				MessageDialog.openError(RedisClientWindow.getRedisClientWindow().getShell(), "错误", "信息填写不完整");
+				return;
+			}
 			Map<String, String> map = new HashMap<>();
 			map.put(CacheConstant.REDIS_HOST, hostTest.getText());
-			map.put(CacheConstant.REDIS_PORT, portText.getText());
+			map.put(CacheConstant.REDIS_PORT, prot);
 			map.put(CacheConstant.REDIS_PASSWORD, passwordText.getText());
 			String message = "redis服务切换失败！";
 			if (PropertiesUtil.writeProperties(map, CacheConstant.REDIS_HOST_FILE, false)) {
